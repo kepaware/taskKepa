@@ -4,6 +4,7 @@
     "slug": "taskKepa",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "taskkepa",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -21,10 +22,22 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.kepaware.taskKepa"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-router",
+      "expo-sqlite"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "bb4b0eec-b5c7-49da-b716-558f9a59541c"
+      }
     }
   }
 }
