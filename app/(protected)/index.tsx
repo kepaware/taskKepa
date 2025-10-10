@@ -3,11 +3,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDBFunctions } from "@/lib/DBUSE";
 import { Link } from "expo-router";
 import { useState } from "react";
+import { DateFunctions } from "@/utils/DateUtils";
 
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
+  const date = DateFunctions().getTimestamp();
   const { isPending: isCollecting, user } = useDBFunctions().useGetUser();
   // const { isPending, items } = useDBFunctions().useFetchAll();
   // const { isFetching, listItems } = useDBFunctions().useFetchListItems();
@@ -25,34 +27,12 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={[styles.container]}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>{date}</Text>
+      </View>
       {/* <Link style={{ position: "absolute", bottom: 220 }} href={"./account"}>
         <Ionicons name="person" color="#3854f0" size={40} />
       </Link> */}
-
-      <Text style={styles.welcome}>Welcome</Text>
-      <Text style={styles.heading}>{user?.username ? user.username : ""}</Text>
-
-      {/* <View style={styles.stats}>
-        <View style={{ marginTop: 30, flexDirection: "row", gap: 14 }}>
-          <View style={{ width: 60, justifyContent: "flex-start" }}>
-            <Text style={styles.statsText}>Menu:</Text>
-          </View>
-
-          <View style={{ width: 40, justifyContent: "flex-end" }}>
-            <Text style={styles.statsText}>{items!.length}</Text>
-          </View>
-        </View>
-
-        <View style={{ marginTop: 10, flexDirection: "row", gap: 14 }}>
-          <View style={{ width: 60, justifyContent: "flex-start" }}>
-            <Text style={styles.statsText}>List:</Text>
-          </View>
-
-          <View style={{ width: 40, justifyContent: "flex-end" }}>
-            <Text style={styles.statsText}>{listItems!.length}</Text>
-          </View>
-        </View>
-      </View> */}
 
       <Pressable style={styles.link} onPress={() => setShowItemModal(true)}>
         <Ionicons name="add-circle" color="black" size={50} />
@@ -78,6 +58,20 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
+  header: {
+    marginTop: 6,
+    width: "100%",
+    height: 56,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
   welcome: {
     marginTop: 80,
     fontSize: 22,
@@ -89,6 +83,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 700,
     color: "blue",
+  },
+  headerText: {
+    fontSize: 20,
+    color: "#2573e7",
+    fontWeight: 700,
   },
   stats: {
     flex: 1,
