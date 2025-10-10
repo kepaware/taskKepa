@@ -28,7 +28,7 @@ type Props = {
 
 export default function ItemModal({ showItemModal, setShowItemModal }: Props) {
   const insets = useSafeAreaInsets();
-  const { newItem } = useDBFunctions().useAddItem();
+  // const { newItem } = useDBFunctions().useAddItem();
 
   const [label, setLabel] = useState("");
   const [category, setCategory] = useState("main");
@@ -49,7 +49,7 @@ export default function ItemModal({ showItemModal, setShowItemModal }: Props) {
       newCategory: category,
     };
 
-    newItem({ item });
+    // newItem({ item });
 
     if (!multiple) {
       clearInputs();

@@ -6,7 +6,7 @@ export function useDatabase() {
 
   async function getUser() {
     try {
-      const user = await db.getFirstAsync<User>("SELECT * FROM users");
+      const user = await db.getFirstAsync<User>("SELECT * FROM taskusers");
       return user;
     } catch (error) {
       console.error("getUser failed: ", error);
@@ -18,83 +18,65 @@ export function useDatabase() {
 
     try {
       const data = await db.runAsync(
-        `UPDATE users SET username = ? WHERE id = ${id}`,
+        `UPDATE taskusers SET username = ? WHERE id = ${id}`,
         newName
       );
       return data.changes;
     } catch (error) {
-      console.log("ToggleError: ", error);
+      console.log("UserUpdateError: ", error);
     }
   }
 
   const fetchAll = async () => {
     const result: Item[] = await db.getAllAsync(
-      `SELECT * FROM items ORDER BY label ASC `
+      `SELECT * FROM tasks ORDER BY title ASC `
     );
     return result;
   };
 
-  const fetchListItems = async () => {
-    const result: Item[] = await db.getAllAsync(
-      `SELECT * FROM items WHERE list = (1) ORDER BY label ASC `
-    );
-    return result;
-  };
+  // const fetchListItems = async () => {
+  //   const result: Item[] = await db.getAllAsync(
+  //     `SELECT * FROM items WHERE list = (1) ORDER BY label ASC `
+  //   );
+  //   return result;
+  // };
 
-  const addItem = async ({ item }: AddProps) => {
-    const { newLabel, newCategory } = item;
-    const userID = 1;
+  // const addItem = async ({ item }: AddProps) => {
+  //   const { newLabel, newCategory } = item;
+  //   const userID = 1;
 
-    try {
-      const data = await db.runAsync(
-        "INSERT INTO items (label, category, list, user_id) VALUES (?, ?, ?, ?)",
-        newLabel,
-        newCategory,
-        false,
-        userID
-      );
+  //   try {
+  //     const data = await db.runAsync(
+  //       "INSERT INTO items (label, category, list, user_id) VALUES (?, ?, ?, ?)",
+  //       newLabel,
+  //       newCategory,
+  //       false,
+  //       userID
+  //     );
 
-      console.log("Item Changes: ", data.changes);
-      return data.changes;
-    } catch (error: any) {
-      console.log("ItemError: ", error);
-      // Alert.alert("AddItemError: ", error);
-    }
-  };
+  //     console.log("Item Changes: ", data.changes);
+  //     return data.changes;
+  //   } catch (error: any) {
+  //     console.log("ItemError: ", error);
+  //     // Alert.alert("AddItemError: ", error);
+  //   }
+  // };
 
-  const toggleItem = async ({ item }: Toggle) => {
-    const { id, list } = item;
-    const newList = !list;
-
-    try {
-      const data = await db.runAsync(
-        `UPDATE items SET list = ${newList} WHERE id = ${id}`
-      );
-      return data.changes;
-    } catch (error) {
-      console.log("ToggleError: ", error);
-    }
-  };
-
-  const deleteItem = async (id: number) => {
-    try {
-      await db.runAsync(
-        `
-        DELETE FROM items WHERE id = ?`,
-        id
-      );
-    } catch (error) {
-      console.log("DeleteError: ", error);
-    }
-  };
+  // const deleteItem = async (id: number) => {
+  //   try {
+  //     await db.runAsync(
+  //       `
+  //       DELETE FROM items WHERE id = ?`,
+  //       id
+  //     );
+  //   } catch (error) {
+  //     console.log("DeleteError: ", error);
+  //   }
+  // };
 
   return {
     getUser,
     updateUser,
     fetchAll,
-    fetchListItems,
-    addItem,
-    toggleItem,
-    deleteItem,
   };
 }

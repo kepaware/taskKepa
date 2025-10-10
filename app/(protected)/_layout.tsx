@@ -22,13 +22,13 @@ export default function TabLayout() {
   const db = useSQLiteContext();
 
   const checkIfUserSet = async () => {
-    const results = await db
-      .getAllAsync("SELECT * FROM users")
-      .then((results: any) => {
-        if (results.length === 0) {
-          authState.setRegister(true);
-        }
-      });
+    await db.getAllAsync("SELECT * FROM taskusers").then((results: any) => {
+      if (results.length >= 1) {
+        return;
+      } else {
+        authState.setRegister();
+      }
+    });
   };
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function TabLayout() {
             },
           }}
         />
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="list"
           options={{
             headerShown: false,
@@ -81,8 +81,9 @@ export default function TabLayout() {
               backgroundColor: "#e1dfeb",
             },
           }}
-        />
-        <Tabs.Screen
+        /> */}
+
+        {/* <Tabs.Screen
           name="menu"
           options={{
             headerShown: false,
@@ -96,7 +97,7 @@ export default function TabLayout() {
               backgroundColor: "#e1dfeb",
             },
           }}
-        />
+        /> */}
         <Tabs.Screen
           name="account"
           options={{

@@ -17,12 +17,14 @@ const createDBIfNeeded = async (db: SQLiteDatabase) => {
   let createDBError: boolean = false;
 
   try {
-    response = await db.execAsync(`
-          CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, pin INTEGER, email TEXT, password TEXT, greeting TEXT);          
-          CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, frequency TEXT, due TEXT);
-        `);
+    await db.execAsync(
+      `
+          CREATE TABLE IF NOT EXISTS taskusers (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, pin INTEGER, email TEXT, password TEXT, greeting TEXT);          
+          CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, frequency TEXT, last TEXT, due TEXT);
+        `
+    );
 
-    console.log("DB created/exists");
+    console.log("DB taskkepa.db created/exists");
   } catch (error) {
     console.error("Error creating database: ", error);
     createDBError = true;

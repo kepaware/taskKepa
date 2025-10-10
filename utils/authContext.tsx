@@ -10,10 +10,13 @@ type AuthState = {
   isReady: boolean;
   logIn: () => void;
   logOut: () => void;
-  setRegister: (value: boolean) => void;
+  setRegister: () => void;
+  deRegister: () => void;
 };
 
-const authStorageKey = "auth-key";
+//Must be different for each App!
+const authStorageKey = "taskauth-key";
+const regStorageKey = "taskregister-key";
 
 export const AuthContext = createContext<AuthState>({
   isLoggedIn: false,
@@ -22,6 +25,7 @@ export const AuthContext = createContext<AuthState>({
   logIn: () => {},
   logOut: () => {},
   setRegister: () => {},
+  deRegister: () => {},
 });
 
 export function AuthProvider({ children }: PropsWithChildren) {
@@ -39,8 +43,23 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const setRegister = (value: boolean) => {
-    setIsRegister(value);
+  const storeRegisterState = async (newState: { isRegister: boolean }) => {
+    try {
+      const jsonValue = JSON.stringify(newState);
+      await AsyncStorage.setItem(regStorageKey, jsonValue);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const setRegister = () => {
+    setIsRegister(true);
+    storeRegisterState({ isRegister: true });
+  };
+
+  const deRegister = () => {
+    setIsRegister(false);
+    storeRegisterState({ isRegister: false });
   };
 
   const logIn = () => {
@@ -55,12 +74,25 @@ export function AuthProvider({ children }: PropsWithChildren) {
   };
 
   useEffect(() => {
+    const getRegisterFromStorage = async () => {
+      try {
+        const regValue = await AsyncStorage.getItem(regStorageKey);
+
+        if (regValue !== null) {
+          const register = JSON.parse(regValue);
+          setIsRegister(register.isRegister);
+        }
+      } catch (error) {
+        console.log("Error fetching from Storage: ", error);
+      }
+    };
+
     const getAuthFromStorage = async () => {
       try {
-        const value = await AsyncStorage.getItem(authStorageKey);
+        const authValue = await AsyncStorage.getItem(authStorageKey);
 
-        if (value !== null) {
-          const auth = JSON.parse(value);
+        if (authValue !== null) {
+          const auth = JSON.parse(authValue);
           setIsLoggedIn(auth.isLoggedIn);
         }
       } catch (error) {
@@ -68,6 +100,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
       setIsReady(true);
     };
+    getRegisterFromStorage();
     getAuthFromStorage();
   }, []);
 
@@ -79,7 +112,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, isReady, isRegister, setRegister, logIn, logOut }}
+      value={{
+        isLoggedIn,
+        isReady,
+        isRegister,
+        setRegister,
+        deRegister,
+        logIn,
+        logOut,
+      }}
     >
       {children}
     </AuthContext.Provider>

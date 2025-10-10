@@ -16,42 +16,30 @@ export default function Register() {
   const authContext = useContext(AuthContext);
   const insets = useSafeAreaInsets();
   const [name, setName] = useState("");
+  const [myPin, setMyPin] = useState("");
+
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function signUpWithEmail() {
+    const newPIN = Number(myPin);
     try {
       await db
         .runAsync(
-          "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+          "INSERT INTO taskusers (username, pin, email, password) VALUES (?, ?, ?, ?)",
           name,
+          newPIN,
           newEmail,
           newPassword
         )
         .then(() => {
-          authContext.setRegister(false);
+          authContext.deRegister();
+          authContext.logIn();
         });
     } catch (error) {
       console.log("ERROR: ", error);
     }
-
-    // setLoading(true);
-    // const {
-    //   data: { session },
-    //   error,
-    // } = await supabase.auth.signUp({
-    //   email: newEmail,
-    //   password: newPassword,
-    //   options: {
-    //     data: {
-    //       username: name,
-    //     },
-    //   },
-    // });
-    // if (error) Alert.alert(error.message);
-    // setLoading(false);
-    // authContext.logIn();
   }
 
   if (loading) return <Text>Loading...</Text>;
@@ -65,8 +53,45 @@ export default function Register() {
     >
       <Text style={styles.heading}>Register a New User:</Text>
 
+      <View
+        style={{
+          // marginBottom: 20,
+          width: "70%",
+          flexDirection: "row",
+          gap: 30,
+        }}
+      >
+        {/* Username: */}
+        <View style={[styles.inputNamePIN]}>
+          <Text style={styles.inputTitle}>Display Name:</Text>
+          <TextInput
+            autoFocus={true}
+            showSoftInputOnFocus={true}
+            style={[styles.textNameInput, { width: "100%" }]}
+            placeholder="Display Name"
+            defaultValue={name}
+            onChangeText={(newText) => setName(newText)}
+            autoCapitalize="none"
+          />
+        </View>
+
+        {/* PIN: */}
+        <View style={[{ flexDirection: "column", width: 56 }]}>
+          <Text style={[styles.inputTitle, { paddingLeft: 12 }]}>PIN:</Text>
+          <TextInput
+            showSoftInputOnFocus={true}
+            keyboardType="numeric"
+            style={[styles.textPINInput]}
+            placeholder="4-dgt"
+            defaultValue={myPin}
+            onChangeText={(newText) => setMyPin(newText)}
+            autoCapitalize="none"
+          />
+        </View>
+      </View>
+
       <View style={styles.inputSection}>
-        <Text style={styles.inputTitle}>Display Name:</Text>
+        {/* <Text style={styles.inputTitle}>Display Name:</Text>
         <TextInput
           autoFocus={true}
           showSoftInputOnFocus={true}
@@ -75,7 +100,7 @@ export default function Register() {
           defaultValue={name}
           onChangeText={(newText) => setName(newText)}
           autoCapitalize="none"
-        />
+        /> */}
 
         <Text style={styles.inputTitle}>Email:</Text>
         <TextInput
@@ -120,6 +145,10 @@ const styles = StyleSheet.create({
     color: "blue",
     marginVertical: 20,
   },
+  inputNamePIN: {
+    flex: 1,
+    justifyContent: "flex-start",
+  },
   inputSection: {
     width: "70%",
     flex: 1,
@@ -133,6 +162,22 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 8,
     marginLeft: 2,
+  },
+  textNameInput: {
+    height: 38,
+    paddingLeft: 10,
+    borderRadius: 4,
+    backgroundColor: "#fff",
+    textAlignVertical: "center",
+    marginBottom: 20,
+  },
+  textPINInput: {
+    height: 38,
+    paddingLeft: 10,
+    borderRadius: 4,
+    backgroundColor: "#fff",
+    textAlignVertical: "center",
+    marginBottom: 20,
   },
   textInput: {
     width: "100%",
