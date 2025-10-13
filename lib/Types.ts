@@ -12,24 +12,12 @@ export type User = {
   username: string;
 };
 
-export type Update = {
-  update: {
+export type TaskProps = {
+  task: {
     id: number;
-    newName: string;
-  };
-};
-
-export type Item = {
-  id: number;
-  label: string;
-  category: string;
-  list: boolean;
-  user_id: number;
-};
-
-export type Toggle = {
-  item: {
-    id: number;
-    list: boolean;
+    title: string;
+    frequency: string;
+    last?: string;
+    due: string;
   };
 };

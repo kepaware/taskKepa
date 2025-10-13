@@ -1,10 +1,15 @@
 import { format } from "date-fns";
 
 export function DateFunctions() {
-  function getTimestamp() {
+  function getFullDate() {
     const date = format(Date.now(), "eeee, dd MMMM yyyy");
     return date;
   }
 
-  return { getTimestamp };
+  function getShortDate() {
+    const date = format(Date.now(), "dd/MM/yy");
+    return date;
+  }
+
+  return { getFullDate, getShortDate };
 }

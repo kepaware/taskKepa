@@ -1,4 +1,6 @@
-import ToggleBtn from "../ToggleBtn";
+import LastDatePicker from "../LastDatePicker";
+import DueDatePicker from "../DueDatePicker";
+import FrequencyPicker from "../FrequencyPicker";
 import { SetStateAction } from "react";
 import { useState } from "react";
 import { useDBFunctions } from "@/lib/DBUSE";
@@ -22,21 +24,28 @@ type AddProps = {
 };
 
 type Props = {
-  showItemModal: boolean;
-  setShowItemModal: React.Dispatch<SetStateAction<boolean>>;
+  showTaskModal: boolean;
+  setShowTaskModal: React.Dispatch<SetStateAction<boolean>>;
 };
 
-export default function ItemModal({ showItemModal, setShowItemModal }: Props) {
+export default function AddTaskModal({
+  showTaskModal,
+  setShowTaskModal,
+}: Props) {
   const insets = useSafeAreaInsets();
   // const { newItem } = useDBFunctions().useAddItem();
 
-  const [label, setLabel] = useState("");
-  const [category, setCategory] = useState("main");
+  const [title, setTitle] = useState("");
+  const [last, setLast] = useState("Select");
+  const [due, setDue] = useState("Select");
+  const [frequency, setFrequency] = useState("Select");
   const [multiple, setMultiple] = useState(false);
-  const [activeBtn, setActiveBtn] = useState(1);
 
   const clearInputs = () => {
-    setLabel("");
+    setTitle("");
+    setFrequency("");
+    setLast("Select");
+    setDue("Select");
   };
 
   const toggleSwitch = () => {
@@ -44,16 +53,20 @@ export default function ItemModal({ showItemModal, setShowItemModal }: Props) {
   };
 
   async function handleSave() {
-    let item = {
-      newLabel: label,
-      newCategory: category,
+    let task = {
+      newTitle: title,
+      newFrequency: frequency,
+      newLast: last,
+      newDue: due,
     };
+
+    console.log(task);
 
     // newItem({ item });
 
     if (!multiple) {
       clearInputs();
-      setShowItemModal(false);
+      setShowTaskModal(false);
     } else {
       clearInputs();
     }
@@ -63,78 +76,45 @@ export default function ItemModal({ showItemModal, setShowItemModal }: Props) {
     <Modal
       animationType="fade"
       transparent={false}
-      visible={showItemModal}
-      onRequestClose={() => setShowItemModal(false)}
+      visible={showTaskModal}
+      onRequestClose={() => setShowTaskModal(false)}
     >
       <View style={[styles.modal, { paddingTop: insets.top }]}>
         <Text style={styles.heading}>Add New Item:</Text>
 
-        {/* Label Input */}
+        {/* Title Input */}
         <View style={{ marginBottom: 20 }}>
-          <Text style={styles.labelText}>Item Name:</Text>
+          <Text style={styles.titleText}>Task Description:</Text>
 
           <TextInput
             autoFocus={true}
             showSoftInputOnFocus={true}
             placeholder=""
-            style={styles.labelInput}
-            value={label}
+            style={styles.titleInput}
+            value={title}
             onChangeText={(value) => {
-              setLabel(value);
+              setTitle(value);
             }}
           />
         </View>
 
-        {/* Category Toggles */}
-        <View>
-          <Text style={styles.labelText}>Category:</Text>
+        {/* Last, Frequency, Due Headings: */}
+        <View style={styles.row}>
+          <Text style={styles.panel1Text}>Last Done:</Text>
+          <Text style={styles.panel2Text}>Frequency:</Text>
+          <Text style={styles.panel3Text}>Next Due:</Text>
+        </View>
 
-          <View
-            style={{
-              marginTop: 2,
-              marginBottom: 20,
-              flexDirection: "row",
-              gap: 0,
-            }}
-          >
-            <ToggleBtn
-              id={1}
-              cat="main"
-              label="Main"
-              activeBtn={activeBtn}
-              setActiveBtn={setActiveBtn}
-              setCategory={setCategory}
-            />
-            <ToggleBtn
-              id={2}
-              cat="f/v"
-              label="F/V"
-              activeBtn={activeBtn}
-              setActiveBtn={setActiveBtn}
-              setCategory={setCategory}
-            />
-            <ToggleBtn
-              id={3}
-              cat="pet"
-              label="Pet"
-              activeBtn={activeBtn}
-              setActiveBtn={setActiveBtn}
-              setCategory={setCategory}
-            />
-            <ToggleBtn
-              id={4}
-              cat="other"
-              label="Other"
-              activeBtn={activeBtn}
-              setActiveBtn={setActiveBtn}
-              setCategory={setCategory}
-            />
-          </View>
+        {/* Last, Frequency, Due Panel: */}
+        <View style={styles.panelRow}>
+          <LastDatePicker last={last} setLast={setLast} />
+          <FrequencyPicker frequency={frequency} setFrequency={setFrequency} />
+          <DueDatePicker due={due} setDue={setDue} />
         </View>
 
         {/* Toggle Switch: */}
         <View style={styles.switchSection}>
-          <Text style={styles.switchText}>Create Multiple Items:</Text>
+          <Text style={styles.switchText}>Create Multiple Tasks:</Text>
 
           <Switch
             trackColor={{ false: "#999", true: "#2427d8" }}
@@ -151,7 +131,7 @@ export default function ItemModal({ showItemModal, setShowItemModal }: Props) {
             handleSave();
           }}
         >
-          <Text style={styles.saveBtnText}>Add New Item</Text>
+          <Text style={styles.saveBtnText}>Add New Task</Text>
         </TouchableOpacity>
       </View>
     </Modal>
@@ -178,19 +158,77 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     color: "blue",
   },
-  labelText: {
+  titleText: {
     fontSize: 14,
     marginBottom: 4,
   },
-  labelInput: {
+  titleInput: {
     marginTop: 4,
     color: "#000",
     height: 38,
-    width: 240,
+    width: 300,
     fontSize: 16,
     paddingLeft: 8,
     borderRadius: 6,
     backgroundColor: "#fff",
+  },
+  row: {
+    width: 300,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  panelRow: {
+    width: 300,
+    marginBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  panel1Text: {
+    width: "34%",
+    paddingTop: 4,
+    paddingBottom: 6,
+    textAlign: "center",
+    color: "#000",
+  },
+  panel2Text: {
+    width: "auto",
+    fontWeight: 600,
+    paddingTop: 4,
+    paddingBottom: 6,
+  },
+  panel3Text: {
+    width: "34%",
+    paddingTop: 4,
+    paddingBottom: 6,
+    paddingHorizontal: 8,
+    textAlign: "right",
+  },
+  panel1: {
+    width: "34%",
+    paddingTop: 4,
+    paddingBottom: 6,
+    paddingHorizontal: 8,
+    textAlign: "center",
+    color: "#fff",
+    backgroundColor: "#000",
+  },
+  panel2: {
+    width: 128,
+    fontWeight: 600,
+    paddingTop: 4,
+    paddingBottom: 6,
+    backgroundColor: "#fff",
+  },
+  panel3: {
+    width: "34%",
+    paddingTop: 4,
+    paddingBottom: 6,
+    paddingHorizontal: 8,
+    textAlign: "right",
+    color: "#fff",
+    backgroundColor: "#000",
   },
   borderTop: {
     marginTop: 26,

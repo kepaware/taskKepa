@@ -1,22 +1,46 @@
-import ItemModal from "@/components/modals/ItemModal";
+import AddTaskModal from "@/components/modals/AddTaskModal";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDBFunctions } from "@/lib/DBUSE";
 import { Link } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateFunctions } from "@/utils/DateUtils";
+import CurrentTaskRow from "@/components/CurrentTaskRow";
+import { taskList } from "@/data/tempData";
 
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-  const date = DateFunctions().getTimestamp();
-  const { isPending: isCollecting, user } = useDBFunctions().useGetUser();
+  const date = DateFunctions().getFullDate();
+  const shortDate = DateFunctions().getShortDate();
+  // const { isPending: isCollecting, user } = useDBFunctions().useGetUser();
+  const [currentTasks, setCurrentTasks] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false);
   // const { isPending, items } = useDBFunctions().useFetchAll();
   // const { isFetching, listItems } = useDBFunctions().useFetchListItems();
-  const [showItemModal, setShowItemModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const tasksHeading = currentTasks
+    ? `TODAY'S TASKS:`
+    : "NO TASKS DUE TODAY...";
+
+  function filterTasks() {
+    setIsLoading(true);
+    const current = taskList.filter((e) => e.due === shortDate);
+
+    if (current) {
+      setCurrentTasks(current);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    filterTasks();
+  }, []);
 
   // if (isPending || isFetching || isCollecting)
-  if (isCollecting)
+  if (isLoading) {
     return (
       <SafeAreaView style={[styles.container]}>
         <Text style={{ marginTop: 50, fontSize: 16, fontWeight: 600 }}>
@@ -24,17 +48,36 @@ export default function HomeScreen() {
         </Text>
       </SafeAreaView>
     );
+  }
 
   return (
     <SafeAreaView style={[styles.container]}>
       <View style={styles.header}>
         <Text style={styles.headerText}>{date}</Text>
       </View>
-      {/* <Link style={{ position: "absolute", bottom: 220 }} href={"./account"}>
-        <Ionicons name="person" color="#3854f0" size={40} />
-      </Link> */}
 
-      <Pressable style={styles.link} onPress={() => setShowItemModal(true)}>
+      <Text style={styles.taskHeading}>{tasksHeading}</Text>
+
+      <FlatList
+        style={{ width: "98%" }}
+        contentContainerStyle={{
+          marginVertical: 10,
+          paddingVertical: 6,
+          flexGrow: 1,
+          alignItems: "center",
+          borderRadius: 6,
+          paddingBottom: 20,
+        }}
+        data={currentTasks}
+        renderItem={({ item: { id, title } }) => {
+          return <CurrentTaskRow id={id} title={title} />;
+        }}
+        alwaysBounceVertical={false}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={({ id }) => id.toString()}
+      />
+
+      <Pressable style={styles.link} onPress={() => setShowTaskModal(true)}>
         <Ionicons name="add-circle" color="black" size={50} />
       </Pressable>
 
@@ -44,9 +87,9 @@ export default function HomeScreen() {
 
       {/* --------------------- Modals: --------------------  */}
 
-      <ItemModal
-        showItemModal={showItemModal}
-        setShowItemModal={setShowItemModal}
+      <AddTaskModal
+        showTaskModal={showTaskModal}
+        setShowTaskModal={setShowTaskModal}
       />
     </SafeAreaView>
   );
@@ -72,12 +115,7 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
   },
-  welcome: {
-    marginTop: 80,
-    fontSize: 22,
-    fontWeight: 700,
-    color: "black",
-  },
+
   heading: {
     marginTop: 16,
     fontSize: 24,
@@ -89,13 +127,10 @@ const styles = StyleSheet.create({
     color: "#2573e7",
     fontWeight: 700,
   },
-  stats: {
-    flex: 1,
-    position: "absolute",
-    bottom: 340,
-  },
-  statsText: {
-    fontSize: 20,
+  taskHeading: {
+    marginTop: 30,
+    marginBottom: 10,
+    fontSize: 18,
     fontWeight: 700,
   },
   link: {

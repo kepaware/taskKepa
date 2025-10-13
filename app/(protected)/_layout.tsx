@@ -67,42 +67,15 @@ export default function TabLayout() {
             },
           }}
         />
-        {/* <Tabs.Screen
-          name="list"
+        <Tabs.Screen
+          name="tasks"
           options={{
             headerShown: false,
-            tabBarLabel: "List",
+            tabBarLabel: "Tasks",
             tabBarIcon: ({ color, size }) => (
               <FontAwesome name="list-ul" color={color} size={22} />
             ),
             animation: "fade",
-            tabBarStyle: {
-              marginBottom: 6,
-              backgroundColor: "#e1dfeb",
-            },
-          }}
-        /> */}
-
-        {/* <Tabs.Screen
-          name="menu"
-          options={{
-            headerShown: false,
-            tabBarLabel: "Menu",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="map" color={color} size={size} />
-            ),
-            animation: "fade",
-            tabBarStyle: {
-              marginBottom: 6,
-              backgroundColor: "#e1dfeb",
-            },
-          }}
-        /> */}
-        <Tabs.Screen
-          name="account"
-          options={{
-            headerShown: false,
-            href: null,
             tabBarStyle: {
               marginBottom: 6,
               backgroundColor: "#e1dfeb",
