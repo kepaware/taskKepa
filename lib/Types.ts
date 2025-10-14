@@ -1,8 +1,21 @@
+export type Task = {
+  id: number;
+  title: string;
+  frequency: string;
+  last: string;
+  due: string;
+};
+
+export type AddTask = {
+  id?: number;
+  newTitle: string;
+  newFrequency: string;
+  newLast: string;
+  newDue: string;
+};
+
 export type AddProps = {
-  item: {
-    newLabel: string;
-    newCategory: string;
-  };
+  task: AddTask;
 };
 
 export type User = {
@@ -20,4 +33,14 @@ export type TaskProps = {
     last?: string;
     due: string;
   };
+};
+
+export type End = {
+  id: number;
+  newLast: string;
+  newDue: string;
+};
+
+export type EndProps = {
+  endUpdate: End;
 };

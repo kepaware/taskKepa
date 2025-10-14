@@ -1,45 +1,17 @@
 import AddTaskModal from "@/components/modals/AddTaskModal";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDBFunctions } from "@/lib/DBUSE";
-import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { DateFunctions } from "@/utils/DateUtils";
 import CurrentTaskRow from "@/components/CurrentTaskRow";
-import { taskList } from "@/data/tempData";
-
 import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const date = DateFunctions().getFullDate();
-  const shortDate = DateFunctions().getShortDate();
-  // const { isPending: isCollecting, user } = useDBFunctions().useGetUser();
-  const [currentTasks, setCurrentTasks] = useState<any>();
-  const [isLoading, setIsLoading] = useState(false);
-  // const { isPending, items } = useDBFunctions().useFetchAll();
-  // const { isFetching, listItems } = useDBFunctions().useFetchListItems();
+  const { isLoading, currentTasks } = useDBFunctions().useFetchCurrent();
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const tasksHeading = currentTasks
-    ? `TODAY'S TASKS:`
-    : "NO TASKS DUE TODAY...";
 
-  function filterTasks() {
-    setIsLoading(true);
-    const current = taskList.filter((e) => e.due === shortDate);
-
-    if (current) {
-      setCurrentTasks(current);
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    filterTasks();
-  }, []);
-
-  // if (isPending || isFetching || isCollecting)
   if (isLoading) {
     return (
       <SafeAreaView style={[styles.container]}>
@@ -49,6 +21,10 @@ export default function HomeScreen() {
       </SafeAreaView>
     );
   }
+
+  const tasksHeading = currentTasks?.length
+    ? `TODAY'S TASKS:`
+    : "NO TASKS DUE TODAY...";
 
   return (
     <SafeAreaView style={[styles.container]}>
@@ -69,8 +45,8 @@ export default function HomeScreen() {
           paddingBottom: 20,
         }}
         data={currentTasks}
-        renderItem={({ item: { id, title } }) => {
-          return <CurrentTaskRow id={id} title={title} />;
+        renderItem={({ item: { id, title, frequency } }) => {
+          return <CurrentTaskRow id={id} title={title} frequency={frequency} />;
         }}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}

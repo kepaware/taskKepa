@@ -1,8 +1,10 @@
 import { useSQLiteContext } from "expo-sqlite";
-import type { User, Update, AddProps, Item, Toggle } from "./Types";
+import type { User, Task, AddProps, EndProps } from "./Types";
+import { DateFunctions } from "@/utils/DateUtils";
 
 export function useDatabase() {
   const db = useSQLiteContext();
+  const shortDate = DateFunctions().getShortDate();
 
   async function getUser() {
     try {
@@ -13,70 +15,75 @@ export function useDatabase() {
     }
   }
 
-  async function updateUser({ update }: Update) {
-    const { id, newName } = update;
-
-    try {
-      const data = await db.runAsync(
-        `UPDATE taskusers SET username = ? WHERE id = ${id}`,
-        newName
-      );
-      return data.changes;
-    } catch (error) {
-      console.log("UserUpdateError: ", error);
-    }
-  }
-
   const fetchAll = async () => {
-    const result: Item[] = await db.getAllAsync(
-      `SELECT * FROM tasks ORDER BY title ASC `
+    const result: Task[] = await db.getAllAsync(
+      `SELECT * FROM tasks ORDER BY due ASC `
     );
     return result;
   };
 
-  // const fetchListItems = async () => {
-  //   const result: Item[] = await db.getAllAsync(
-  //     `SELECT * FROM items WHERE list = (1) ORDER BY label ASC `
-  //   );
-  //   return result;
-  // };
+  const fetchCurrent = async () => {
+    const results: Task[] = await db.getAllAsync(
+      `SELECT * FROM tasks ORDER BY title ASC `
+    );
 
-  // const addItem = async ({ item }: AddProps) => {
-  //   const { newLabel, newCategory } = item;
-  //   const userID = 1;
+    const current = results?.filter((e) => e.due === shortDate);
 
-  //   try {
-  //     const data = await db.runAsync(
-  //       "INSERT INTO items (label, category, list, user_id) VALUES (?, ?, ?, ?)",
-  //       newLabel,
-  //       newCategory,
-  //       false,
-  //       userID
-  //     );
+    return current;
+  };
 
-  //     console.log("Item Changes: ", data.changes);
-  //     return data.changes;
-  //   } catch (error: any) {
-  //     console.log("ItemError: ", error);
-  //     // Alert.alert("AddItemError: ", error);
-  //   }
-  // };
+  const addTask = async ({ task }: AddProps) => {
+    const { newTitle, newFrequency, newLast, newDue } = task;
 
-  // const deleteItem = async (id: number) => {
-  //   try {
-  //     await db.runAsync(
-  //       `
-  //       DELETE FROM items WHERE id = ?`,
-  //       id
-  //     );
-  //   } catch (error) {
-  //     console.log("DeleteError: ", error);
-  //   }
-  // };
+    try {
+      const data = await db.runAsync(
+        "INSERT INTO tasks (title, frequency, last, due) VALUES (?, ?, ?, ?)",
+        newTitle,
+        newFrequency,
+        newLast,
+        newDue
+      );
+
+      return data.changes;
+    } catch (error: any) {
+      console.log("AddTaskError: ", error);
+      // Alert.alert("AddItemError: ", error);
+    }
+  };
+
+  const endTask = async ({ endUpdate }: EndProps) => {
+    const { id, newLast, newDue } = endUpdate;
+
+    try {
+      const data = await db.runAsync(
+        `UPDATE tasks SET (last, due) = (?, ?) WHERE id = ${id}`,
+        newLast,
+        newDue
+      );
+      return data.changes;
+    } catch (error) {
+      console.log("EndUpdateError: ", error);
+    }
+  };
+
+  const deleteTask = async (id: number) => {
+    try {
+      await db.runAsync(
+        `
+        DELETE FROM tasks WHERE id = ?`,
+        id
+      );
+    } catch (error) {
+      console.log("DeleteError: ", error);
+    }
+  };
 
   return {
     getUser,
-    updateUser,
     fetchAll,
+    fetchCurrent,
+    addTask,
+    endTask,
+    deleteTask,
   };
 }

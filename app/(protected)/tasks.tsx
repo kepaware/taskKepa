@@ -1,27 +1,11 @@
 import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TaskListRow from "@/components/TaskListRow";
-import { taskList } from "@/data/tempData";
-
-// const taskList = [
-//   {
-//     id: 1,
-//     title: "Remove cobwebs from all areas",
-//     frequency: "Fortnightly",
-//     last: "28/09/25",
-//     due: "11/10/25",
-//   },
-//   {
-//     id: 2,
-//     title: "Put out rubbish wheelie bins",
-//     frequency: "Weekly",
-//     last: "29/09/25",
-//     due: "12/10/25",
-//   },
-// ];
+import { useDBFunctions } from "@/lib/DBUSE";
 
 export default function Tasks() {
   const insets = useSafeAreaInsets();
+  const { isPending, tasks } = useDBFunctions().useFetchTasks();
 
   return (
     <View
@@ -42,7 +26,7 @@ export default function Tasks() {
           borderRadius: 6,
           paddingBottom: 20,
         }}
-        data={taskList}
+        data={tasks}
         renderItem={({ item: { id, title, frequency, last, due } }) => {
           return (
             <TaskListRow

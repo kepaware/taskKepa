@@ -1,17 +1,10 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useDatabase } from "./DBAPI";
-import type { AddProps, Toggle, Update } from "./Types";
+import type { AddProps, EndProps } from "./Types";
 
 export function useDBFunctions() {
-  const {
-    getUser,
-    updateUser,
-    fetchAll,
-    // fetchListItems,
-    // addItem,
-    // toggleItem,
-    // deleteItem,
-  } = useDatabase();
+  const { getUser, fetchAll, fetchCurrent, addTask, endTask, deleteTask } =
+    useDatabase();
   const queryClient = useQueryClient();
 
   function useGetUser() {
@@ -27,78 +20,79 @@ export function useDBFunctions() {
     return { isPending, user, error };
   }
 
-  function useUpdateUser() {
-    const { mutate: updateName, isPending: isUpdating } = useMutation({
-      mutationFn: ({ update }: Update) => updateUser({ update }),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["taskuser"] });
-      },
-      onError: (error) => {
-        console.log("UPDATE USER ERROR: ", error.message);
-      },
-    });
-    return { isUpdating, updateName };
-  }
-
-  function useFetchAll() {
+  function useFetchTasks() {
     const {
       isPending,
-      data: items,
+      data: tasks,
       error,
     } = useQuery({
       queryKey: ["tasks"],
       queryFn: fetchAll,
     });
 
-    return { isPending, items, error };
+    return { isPending, tasks, error };
   }
 
-  // function useFetchListItems() {
-  //   const {
-  //     isPending: isFetching,
-  //     data: listItems,
-  //     error,
-  //   } = useQuery({
-  //     queryKey: ["listItems"],
-  //     queryFn: fetchListItems,
-  //   });
+  function useFetchCurrent() {
+    const {
+      isPending: isLoading,
+      data: currentTasks,
+      error,
+    } = useQuery({
+      queryKey: ["current"],
+      queryFn: fetchCurrent,
+    });
 
-  //   return { isFetching, listItems, error };
-  // }
+    return { isLoading, currentTasks, error };
+  }
 
-  // function useAddItem() {
-  //   const { mutate: newItem, isPending: isCreating } = useMutation({
-  //     mutationFn: ({ item }: AddProps) => addItem({ item }),
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ["items"] });
-  //     },
-  //     onError: (error) => {
-  //       console.log("ADD ITEM ERROR: ", error.message);
-  //     },
-  //   });
-  //   return { isCreating, newItem };
-  // }
+  function useAddTask() {
+    const { mutate: newTask, isPending: isCreating } = useMutation({
+      mutationFn: ({ task }: AddProps) => addTask({ task }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        queryClient.invalidateQueries({ queryKey: ["current"] });
+      },
+      onError: (error) => {
+        console.log("ADD TASK ERROR: ", error.message);
+      },
+    });
+    return { isCreating, newTask };
+  }
 
-  // function useDeleteItem() {
-  //   const { mutate: deleteMenuItem, isPending: isDeleting } = useMutation({
-  //     mutationFn: (id: number) => deleteItem(id),
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ["items"] });
-  //       queryClient.invalidateQueries({ queryKey: ["listItems"] });
-  //     },
-  //     onError: (error) => {
-  //       console.log("DELETE ITEM ERROR: ", error.message);
-  //     },
-  //   });
-  //   return { isDeleting, deleteMenuItem };
-  // }
+  function useEndTask() {
+    const { mutate: finishTask, isPending: isUpdating } = useMutation({
+      mutationFn: ({ endUpdate }: EndProps) => endTask({ endUpdate }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["current"] });
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      },
+      onError: (error) => {
+        console.log("END TASK ERROR: ", error.message);
+      },
+    });
+    return { isUpdating, finishTask };
+  }
+
+  function useDeleteTask() {
+    const { mutate: removeTask, isPending: isDeleting } = useMutation({
+      mutationFn: (id: number) => deleteTask(id),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      },
+      onError: (error) => {
+        console.log("DELETE TASK ERROR: ", error.message);
+      },
+    });
+    return { isDeleting, removeTask };
+  }
 
   return {
     useGetUser,
-    useUpdateUser,
-    useFetchAll,
-    // useFetchListItems,
-    // useAddItem,
-    // useDeleteItem,
+    useFetchTasks,
+    useFetchCurrent,
+    useAddTask,
+    useEndTask,
+    useDeleteTask,
   };
 }

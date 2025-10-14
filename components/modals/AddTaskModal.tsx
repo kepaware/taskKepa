@@ -1,6 +1,6 @@
-import LastDatePicker from "../LastDatePicker";
-import DueDatePicker from "../DueDatePicker";
-import FrequencyPicker from "../FrequencyPicker";
+import AddLastDatePicker from "@/components/pickers/AddLastDatePicker";
+import AddDueDatePicker from "@/components/pickers/AddDueDatePicker";
+import AddFrequencyDD from "@/components/pickers/AddFrequencyDD";
 import { SetStateAction } from "react";
 import { useState } from "react";
 import { useDBFunctions } from "@/lib/DBUSE";
@@ -16,13 +16,6 @@ import {
   View,
 } from "react-native";
 
-type AddProps = {
-  item: {
-    newLabel: string;
-    newCategory: string;
-  };
-};
-
 type Props = {
   showTaskModal: boolean;
   setShowTaskModal: React.Dispatch<SetStateAction<boolean>>;
@@ -33,7 +26,7 @@ export default function AddTaskModal({
   setShowTaskModal,
 }: Props) {
   const insets = useSafeAreaInsets();
-  // const { newItem } = useDBFunctions().useAddItem();
+  const { newTask } = useDBFunctions().useAddTask();
 
   const [title, setTitle] = useState("");
   const [last, setLast] = useState("Select");
@@ -43,7 +36,7 @@ export default function AddTaskModal({
 
   const clearInputs = () => {
     setTitle("");
-    setFrequency("");
+    setFrequency("Select");
     setLast("Select");
     setDue("Select");
   };
@@ -60,9 +53,7 @@ export default function AddTaskModal({
       newDue: due,
     };
 
-    console.log(task);
-
-    // newItem({ item });
+    newTask({ task });
 
     if (!multiple) {
       clearInputs();
@@ -105,11 +96,10 @@ export default function AddTaskModal({
           <Text style={styles.panel3Text}>Next Due:</Text>
         </View>
 
-        {/* Last, Frequency, Due Panel: */}
         <View style={styles.panelRow}>
-          <LastDatePicker last={last} setLast={setLast} />
-          <FrequencyPicker frequency={frequency} setFrequency={setFrequency} />
-          <DueDatePicker due={due} setDue={setDue} />
+          <AddLastDatePicker last={last} setLast={setLast} />
+          <AddFrequencyDD frequency={frequency} setFrequency={setFrequency} />
+          <AddDueDatePicker due={due} setDue={setDue} />
         </View>
 
         {/* Toggle Switch: */}
@@ -189,7 +179,8 @@ const styles = StyleSheet.create({
     width: "34%",
     paddingTop: 4,
     paddingBottom: 6,
-    textAlign: "center",
+    textAlign: "left",
+    paddingLeft: 6,
     color: "#000",
   },
   panel2Text: {
