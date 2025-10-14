@@ -6,15 +6,6 @@ export function useDatabase() {
   const db = useSQLiteContext();
   const shortDate = DateFunctions().getShortDate();
 
-  async function getUser() {
-    try {
-      const user = await db.getFirstAsync<User>("SELECT * FROM taskusers");
-      return user;
-    } catch (error) {
-      console.error("getUser failed: ", error);
-    }
-  }
-
   const fetchAll = async () => {
     const result: Task[] = await db.getAllAsync(
       `SELECT * FROM tasks ORDER BY due ASC `
@@ -47,7 +38,6 @@ export function useDatabase() {
       return data.changes;
     } catch (error: any) {
       console.log("AddTaskError: ", error);
-      // Alert.alert("AddItemError: ", error);
     }
   };
 
@@ -79,7 +69,6 @@ export function useDatabase() {
   };
 
   return {
-    getUser,
     fetchAll,
     fetchCurrent,
     addTask,

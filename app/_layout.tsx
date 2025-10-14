@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { AuthProvider } from "@/utils/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 
@@ -33,7 +32,7 @@ const createDBIfNeeded = async (db: SQLiteDatabase) => {
 
 export default function App() {
   return (
-    <AuthProvider>
+    <>
       <StatusBar style="dark" />
       <QueryClientProvider client={queryClient}>
         <SQLiteProvider databaseName="taskkepa.db" onInit={createDBIfNeeded}>
@@ -45,25 +44,9 @@ export default function App() {
                 animation: "none",
               }}
             />
-
-            <Stack.Screen
-              name="login"
-              options={{
-                headerShown: false,
-                animation: "none",
-              }}
-            />
-
-            <Stack.Screen
-              name="register"
-              options={{
-                headerShown: false,
-                animation: "none",
-              }}
-            />
           </Stack>
         </SQLiteProvider>
       </QueryClientProvider>
-    </AuthProvider>
+    </>
   );
 }

@@ -3,22 +3,9 @@ import { useDatabase } from "./DBAPI";
 import type { AddProps, EndProps } from "./Types";
 
 export function useDBFunctions() {
-  const { getUser, fetchAll, fetchCurrent, addTask, endTask, deleteTask } =
+  const { fetchAll, fetchCurrent, addTask, endTask, deleteTask } =
     useDatabase();
   const queryClient = useQueryClient();
-
-  function useGetUser() {
-    const {
-      isPending,
-      data: user,
-      error,
-    } = useQuery({
-      queryKey: ["taskuser"],
-      queryFn: getUser,
-    });
-
-    return { isPending, user, error };
-  }
 
   function useFetchTasks() {
     const {
@@ -88,7 +75,6 @@ export function useDBFunctions() {
   }
 
   return {
-    useGetUser,
     useFetchTasks,
     useFetchCurrent,
     useAddTask,

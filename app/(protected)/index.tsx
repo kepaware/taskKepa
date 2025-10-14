@@ -1,9 +1,9 @@
-import AddTaskModal from "@/components/modals/AddTaskModal";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useDBFunctions } from "@/lib/DBUSE";
-import { useEffect, useState } from "react";
-import { DateFunctions } from "@/utils/DateUtils";
+import AddTaskModal from "@/components/modals/AddTaskModal";
 import CurrentTaskRow from "@/components/CurrentTaskRow";
+import { useDBFunctions } from "@/lib/DBUSE";
+import { useState } from "react";
+import { DateFunctions } from "@/utils/DateUtils";
 import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

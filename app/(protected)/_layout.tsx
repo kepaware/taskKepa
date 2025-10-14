@@ -1,13 +1,10 @@
-import { Redirect, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { HapticTab } from "@/components/ui/HapticTab";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthContext } from "@/utils/authContext";
-import { useContext, useEffect, useState } from "react";
-import { useSQLiteContext } from "expo-sqlite";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,35 +15,6 @@ const queryClient = new QueryClient({
 });
 
 export default function TabLayout() {
-  const authState = useContext(AuthContext);
-  const db = useSQLiteContext();
-
-  const checkIfUserSet = async () => {
-    await db.getAllAsync("SELECT * FROM taskusers").then((results: any) => {
-      if (results.length >= 1) {
-        return;
-      } else {
-        authState.setRegister();
-      }
-    });
-  };
-
-  useEffect(() => {
-    checkIfUserSet();
-  });
-
-  if (!authState.isReady) {
-    return null;
-  }
-
-  if (!authState.isLoggedIn && !authState.isRegister) {
-    return <Redirect href="/login" />;
-  }
-
-  if (!authState.isLoggedIn && authState.isRegister) {
-    return <Redirect href="/register" />;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <StatusBar style="dark" />
