@@ -1,3 +1,4 @@
+import { frequencies } from "../frequencies";
 import { useState, type SetStateAction } from "react";
 import { FlatList, StyleSheet, View, Text, Pressable } from "react-native";
 
@@ -12,7 +13,6 @@ type Item = {
   id: number;
   label: string;
   value: string;
-  // setShowList: React.Dispatch<SetStateAction<boolean>>;
 };
 
 type RenderProps = {
@@ -20,18 +20,13 @@ type RenderProps = {
   index: number;
 };
 
-const data = [
-  { id: 1, label: "Weekly", value: "Weekly" },
-  { id: 2, label: "Fortnightly", value: "Fortnightly" },
-  { id: 3, label: "Monthly", value: "Monthly" },
-];
-
 export default function EditFrequencyDD({
   frequency,
   isEditing,
   setFrequency,
   setIsEditing,
 }: Props) {
+  const data = frequencies;
   const [showList, setShowList] = useState(false);
 
   function selectItem(label: string) {
@@ -100,7 +95,7 @@ const styles = StyleSheet.create({
   listContainer: {
     position: "absolute",
     width: 128,
-    top: 34,
+    top: 40,
     height: "auto",
     zIndex: 10,
     backgroundColor: "#fff",

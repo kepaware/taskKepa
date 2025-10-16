@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     paddingVertical: 8,
     color: "#fff",
-    backgroundColor: "#5915b3",
+    backgroundColor: "#784bb3",
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
   },
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     textAlign: "left",
     color: "#fff",
-    backgroundColor: "#000",
+    backgroundColor: "#555",
   },
   panel2: {
     fontWeight: 600,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     textAlign: "right",
     color: "#fff",
-    backgroundColor: "#000",
+    backgroundColor: "#555",
   },
 });
 

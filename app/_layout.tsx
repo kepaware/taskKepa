@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
+import { Alert } from "react-native";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -12,13 +13,11 @@ const queryClient = new QueryClient({
 });
 
 const createDBIfNeeded = async (db: SQLiteDatabase) => {
-  let response: any;
   let createDBError: boolean = false;
 
   try {
     await db.execAsync(
-      `
-          CREATE TABLE IF NOT EXISTS taskusers (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, pin INTEGER, email TEXT, password TEXT, greeting TEXT);          
+      `        
           CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, frequency TEXT, last TEXT, due TEXT);
         `
     );
@@ -26,6 +25,7 @@ const createDBIfNeeded = async (db: SQLiteDatabase) => {
     console.log("DB taskkepa.db created/exists");
   } catch (error) {
     console.error("Error creating database: ", error);
+    Alert.alert(`Error creating database: ${error}`);
     createDBError = true;
   }
 };
