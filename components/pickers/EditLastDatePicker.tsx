@@ -4,18 +4,28 @@ import { format } from "date-fns";
 import { useState, type SetStateAction } from "react";
 
 type DateProps = {
-  due: string;
-  setDue: React.Dispatch<SetStateAction<string>>;
+  last: string;
+  isEditing: boolean;
+  setLast: React.Dispatch<SetStateAction<string>>;
   setIsEditing: React.Dispatch<SetStateAction<boolean>>;
 };
 
-export default function AddDueDatePicker({ due, setDue }: DateProps) {
+export default function EditLastDatePicker({
+  last,
+  isEditing,
+  setLast,
+  setIsEditing,
+}: DateProps) {
   const [date, setDate] = useState(new Date());
 
   const onChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate;
     const temp = format(currentDate, "dd/MM/yy");
-    setDue(temp);
+    setLast(temp);
+
+    if (!isEditing) {
+      setIsEditing(true);
+    }
   };
 
   const showMode = (currentMode: any) => {
@@ -33,7 +43,7 @@ export default function AddDueDatePicker({ due, setDue }: DateProps) {
 
   return (
     <Pressable style={styles.panel1} onPress={showDatepicker}>
-      <Text style={styles.panel1Text}>{due}</Text>
+      <Text style={styles.panel1Text}>{last}</Text>
     </Pressable>
   );
 }
@@ -44,7 +54,7 @@ const styles = StyleSheet.create({
     height: 36,
     justifyContent: "center",
     paddingHorizontal: 8,
-    borderTopRightRadius: 6,
+    borderTopLeftRadius: 6,
     color: "#fff",
     backgroundColor: "#000",
   },

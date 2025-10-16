@@ -35,7 +35,7 @@ export type TaskProps = {
   };
 };
 
-export type End = {
+type End = {
   id: number;
   newLast: string;
   newDue: string;
@@ -43,4 +43,16 @@ export type End = {
 
 export type EndProps = {
   endUpdate: End;
+};
+
+type Update = {
+  id: number;
+  newTitle: string;
+  newFrequency: string;
+  newLast: string;
+  newDue: string;
+};
+
+export type UpdateProps = {
+  update: Update;
 };

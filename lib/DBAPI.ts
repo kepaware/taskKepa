@@ -1,5 +1,5 @@
 import { useSQLiteContext } from "expo-sqlite";
-import type { User, Task, AddProps, EndProps } from "./Types";
+import type { User, Task, AddProps, UpdateProps, EndProps } from "./Types";
 import { DateFunctions } from "@/utils/DateUtils";
 
 export function useDatabase() {
@@ -41,6 +41,23 @@ export function useDatabase() {
     }
   };
 
+  const updateTask = async ({ update }: UpdateProps) => {
+    const { id, newTitle, newFrequency, newLast, newDue } = update;
+
+    try {
+      const data = await db.runAsync(
+        `UPDATE tasks SET (title, frequency, last, due) = (?, ?, ?, ?) WHERE id = ${id}`,
+        newTitle,
+        newFrequency,
+        newLast,
+        newDue
+      );
+      return data.changes;
+    } catch (error) {
+      console.log("UpdateTaskError: ", error);
+    }
+  };
+
   const endTask = async ({ endUpdate }: EndProps) => {
     const { id, newLast, newDue } = endUpdate;
 
@@ -72,6 +89,7 @@ export function useDatabase() {
     fetchAll,
     fetchCurrent,
     addTask,
+    updateTask,
     endTask,
     deleteTask,
   };

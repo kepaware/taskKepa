@@ -5,17 +5,27 @@ import { useState, type SetStateAction } from "react";
 
 type DateProps = {
   due: string;
+  isEditing: boolean;
   setDue: React.Dispatch<SetStateAction<string>>;
   setIsEditing: React.Dispatch<SetStateAction<boolean>>;
 };
 
-export default function AddDueDatePicker({ due, setDue }: DateProps) {
+export default function EditDueDatePicker({
+  due,
+  isEditing,
+  setDue,
+  setIsEditing,
+}: DateProps) {
   const [date, setDate] = useState(new Date());
 
   const onChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate;
     const temp = format(currentDate, "dd/MM/yy");
     setDue(temp);
+
+    if (!isEditing) {
+      setIsEditing(true);
+    }
   };
 
   const showMode = (currentMode: any) => {

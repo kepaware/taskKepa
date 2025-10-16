@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, Pressable, Task } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import EditTaskModal from "./modals/EditTaskModal";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { useState } from "react";
 
 export type TaskProps = {
   id: number;
@@ -16,25 +17,40 @@ export default function TaskListRow({
   last,
   due,
 }: TaskProps) {
-  return (
-    <Pressable style={styles.section}>
-      {/* Description: */}
-      <Text style={styles.description}>{title}</Text>
+  const [showEditModal, setShowEditModal] = useState(false);
 
-      {/* Dates Panel: */}
-      <View style={styles.row}>
-        <Text style={styles.panel1}>Last: {last}</Text>
-        <Text style={styles.panel2}>{frequency}</Text>
-        <Text style={styles.panel3}>Due: {due}</Text>
-      </View>
-    </Pressable>
+  return (
+    <>
+      <Pressable
+        style={styles.section}
+        onLongPress={() => setShowEditModal(true)}
+      >
+        {/* Description: */}
+        <Text style={styles.description}>{title}</Text>
+
+        {/* Dates Panel: */}
+        <View style={styles.row}>
+          <Text style={styles.panel1}>Last: {last}</Text>
+          <Text style={styles.panel2}>{frequency}</Text>
+          <Text style={styles.panel3}>Due: {due}</Text>
+        </View>
+      </Pressable>
+
+      <EditTaskModal
+        id={id}
+        title={title}
+        frequency={frequency}
+        last={last!}
+        due={due}
+        showEditModal={showEditModal}
+        setShowEditModal={setShowEditModal}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   section: {
-    // borderTopLeftRadius: 6,
-    // borderTopRightRadius: 6,
     borderRadius: 6,
     marginVertical: 10,
     flexDirection: "column",

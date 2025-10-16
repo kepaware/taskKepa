@@ -23,6 +23,7 @@ export default function EndTaskModal({
 }: Props) {
   const insets = useSafeAreaInsets();
   const [due, setDue] = useState("Select");
+  const [endError, setEndError] = useState<string | null>(null);
   const shortDate = DateFunctions().getShortDate();
   const { finishTask } = useDBFunctions().useEndTask();
 
@@ -33,7 +34,11 @@ export default function EndTaskModal({
       newDue: due,
     };
 
-    finishTask({ endUpdate });
+    if (due === "Select") {
+      setEndError("New due date is required!");
+    } else {
+      finishTask({ endUpdate });
+    }
   }
 
   return (
@@ -44,7 +49,7 @@ export default function EndTaskModal({
       onRequestClose={() => setShowEndModal(false)}
     >
       <View style={[styles.modal, { paddingTop: insets.top }]}>
-        <Text style={styles.heading}>TASK COMPLETED:</Text>
+        <Text style={styles.heading}>COMPLETED TASK:</Text>
 
         <Text style={styles.taskTitle}>"{title}"</Text>
         <Text style={styles.taskSubTitle}>({frequency})</Text>
@@ -54,6 +59,8 @@ export default function EndTaskModal({
         </View>
 
         <EndDueDatePicker due={due} setDue={setDue} />
+
+        {endError && <Text style={styles.errorText}>{endError}</Text>}
 
         <TouchableOpacity
           style={styles.saveBtn}
@@ -104,6 +111,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 700,
     marginBottom: 20,
+  },
+  errorText: {
+    marginVertical: 6,
+    color: "#f80808",
+    fontSize: 18,
+    fontWeight: 700,
+    textAlign: "left",
   },
   saveBtn: {
     marginTop: 20,

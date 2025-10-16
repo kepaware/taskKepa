@@ -1,9 +1,9 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useDatabase } from "./DBAPI";
-import type { AddProps, EndProps } from "./Types";
+import type { AddProps, UpdateProps, EndProps } from "./Types";
 
 export function useDBFunctions() {
-  const { fetchAll, fetchCurrent, addTask, endTask, deleteTask } =
+  const { fetchAll, fetchCurrent, addTask, updateTask, endTask, deleteTask } =
     useDatabase();
   const queryClient = useQueryClient();
 
@@ -47,6 +47,20 @@ export function useDBFunctions() {
     return { isCreating, newTask };
   }
 
+  function useUpdateTask() {
+    const { mutate: editTask, isPending: isUpdating } = useMutation({
+      mutationFn: ({ update }: UpdateProps) => updateTask({ update }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["current"] });
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      },
+      onError: (error) => {
+        console.log("UPDATE TASK ERROR: ", error.message);
+      },
+    });
+    return { isUpdating, editTask };
+  }
+
   function useEndTask() {
     const { mutate: finishTask, isPending: isUpdating } = useMutation({
       mutationFn: ({ endUpdate }: EndProps) => endTask({ endUpdate }),
@@ -78,6 +92,7 @@ export function useDBFunctions() {
     useFetchTasks,
     useFetchCurrent,
     useAddTask,
+    useUpdateTask,
     useEndTask,
     useDeleteTask,
   };
