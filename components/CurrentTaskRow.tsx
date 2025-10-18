@@ -1,20 +1,41 @@
 import EndTaskModal from "./modals/EndTaskModal";
 import { Text, StyleSheet, Pressable } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { DateFunctions } from "@/utils/DateUtils";
+import { compareAsc } from "date-fns";
 
 export type TaskProps = {
   id: number;
   title: string;
   frequency: string;
+  due: string;
 };
 
-export default function CurrentTaskRow({ id, title, frequency }: TaskProps) {
+export default function CurrentTaskRow({
+  id,
+  title,
+  frequency,
+  due,
+}: TaskProps) {
   const [showEndModal, setShowEndModal] = useState(false);
+  const [isOverdue, setIsOverdue] = useState(false);
+  const shortDate = DateFunctions().getShortDate();
+  const currentDate = DateFunctions().convert(shortDate);
+  const eDue = DateFunctions().convert(due);
+
+  const bgColor = isOverdue ? "#a01313" : "#5915b3";
+  useEffect(() => {
+    if (eDue < currentDate) {
+      setIsOverdue(true);
+    }
+  }, []);
 
   return (
     <>
       <Pressable style={styles.section} onPress={() => setShowEndModal(true)}>
-        <Text style={styles.description}>{title}</Text>
+        <Text style={[styles.description, { backgroundColor: `${bgColor}` }]}>
+          {title}
+        </Text>
       </Pressable>
 
       <EndTaskModal
@@ -30,8 +51,6 @@ export default function CurrentTaskRow({ id, title, frequency }: TaskProps) {
 
 const styles = StyleSheet.create({
   section: {
-    // borderTopLeftRadius: 6,
-    // borderTopRightRadius: 6,
     borderRadius: 6,
     marginVertical: 10,
     flexDirection: "column",
@@ -49,7 +68,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     paddingVertical: 8,
     color: "#fff",
-    backgroundColor: "#5915b3",
+
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
   },

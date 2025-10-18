@@ -45,8 +45,15 @@ export default function HomeScreen() {
           paddingBottom: 20,
         }}
         data={currentTasks}
-        renderItem={({ item: { id, title, frequency } }) => {
-          return <CurrentTaskRow id={id} title={title} frequency={frequency} />;
+        renderItem={({ item: { id, title, frequency, due } }) => {
+          return (
+            <CurrentTaskRow
+              id={id}
+              title={title}
+              frequency={frequency}
+              due={due}
+            />
+          );
         }}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}

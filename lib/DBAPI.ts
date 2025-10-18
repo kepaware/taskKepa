@@ -1,5 +1,5 @@
 import { useSQLiteContext } from "expo-sqlite";
-import type { User, Task, AddProps, UpdateProps, EndProps } from "./Types";
+import type { Task, AddProps, UpdateProps, EndProps } from "./Types";
 import { DateFunctions } from "@/utils/DateUtils";
 
 export function useDatabase() {
@@ -14,13 +14,23 @@ export function useDatabase() {
   };
 
   const fetchCurrent = async () => {
+    const currentDate = DateFunctions().convert(shortDate);
+
     const results: Task[] = await db.getAllAsync(
-      `SELECT * FROM tasks ORDER BY title ASC `
+      `SELECT * FROM tasks ORDER BY due ASC `
     );
 
-    const current = results?.filter((e) => e.due === shortDate);
+    const currentTasks: any = [];
 
-    return current;
+    results.forEach((e) => {
+      const eDue = DateFunctions().convert(e.due);
+
+      if (eDue < currentDate || e.due === shortDate) {
+        currentTasks.push(e);
+      }
+    });
+
+    return currentTasks;
   };
 
   const addTask = async ({ task }: AddProps) => {
