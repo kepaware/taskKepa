@@ -56,3 +56,7 @@ type Update = {
 export type UpdateProps = {
   update: Update;
 };
+
+export type SeedArray = {
+  fileItemsArray: Task[];
+};

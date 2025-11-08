@@ -33,9 +33,9 @@ const createDBIfNeeded = async (db: SQLiteDatabase) => {
 export default function App() {
   return (
     <>
-      <StatusBar style="dark" />
-      <QueryClientProvider client={queryClient}>
-        <SQLiteProvider databaseName="taskkepa.db" onInit={createDBIfNeeded}>
+      <SQLiteProvider databaseName="taskkepa.db" onInit={createDBIfNeeded}>
+        <QueryClientProvider client={queryClient}>
+          <StatusBar style="dark" />
           <Stack>
             <Stack.Screen
               name="(protected)"
@@ -45,8 +45,8 @@ export default function App() {
               }}
             />
           </Stack>
-        </SQLiteProvider>
-      </QueryClientProvider>
+        </QueryClientProvider>
+      </SQLiteProvider>
     </>
   );
 }

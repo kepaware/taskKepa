@@ -1,10 +1,18 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useDatabase } from "./DBAPI";
-import type { AddProps, UpdateProps, EndProps } from "./Types";
+import type { AddProps, UpdateProps, SeedArray, EndProps } from "./Types";
 
 export function useDBFunctions() {
-  const { fetchAll, fetchCurrent, addTask, updateTask, endTask, deleteTask } =
-    useDatabase();
+  const {
+    fetchAll,
+    fetchCurrent,
+    addTask,
+    updateTask,
+    endTask,
+    deleteTask,
+    clearTasksTable,
+    seedDatabase,
+  } = useDatabase();
   const queryClient = useQueryClient();
 
   function useFetchTasks() {
@@ -88,6 +96,34 @@ export function useDBFunctions() {
     return { isDeleting, removeTask };
   }
 
+  function useClearTasksTable() {
+    const { mutate: clearTable, isPending: isClearing } = useMutation({
+      mutationFn: clearTasksTable,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      },
+      onError: (error) => {
+        console.log("CLEAR TABLE ERROR: ", error.message);
+      },
+    });
+    return { isClearing, clearTable };
+  }
+
+  function useSeedDatabase() {
+    const { mutate: seedDB, isPending: isSeeding } = useMutation({
+      mutationFn: ({ fileItemsArray }: SeedArray) =>
+        seedDatabase({ fileItemsArray }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        queryClient.invalidateQueries({ queryKey: ["current"] });
+      },
+      onError: (error) => {
+        console.log("SEED DB ERROR: ", error.message);
+      },
+    });
+    return { seedDB, isSeeding };
+  }
+
   return {
     useFetchTasks,
     useFetchCurrent,
@@ -95,5 +131,7 @@ export function useDBFunctions() {
     useUpdateTask,
     useEndTask,
     useDeleteTask,
+    useClearTasksTable,
+    useSeedDatabase,
   };
 }

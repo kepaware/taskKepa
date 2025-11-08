@@ -6,11 +6,13 @@ import { useState } from "react";
 import { DateFunctions } from "@/utils/DateUtils";
 import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const date = DateFunctions().getFullDate();
   const { isLoading, currentTasks } = useDBFunctions().useFetchCurrent();
   const [showTaskModal, setShowTaskModal] = useState(false);
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -28,6 +30,12 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={[styles.container]}>
+      <Pressable
+        style={{ position: "absolute", top: 114, right: 34 }}
+        onPress={() => router.push("/recovery")}
+      >
+        <Ionicons name="medkit" color="green" size={30} />
+      </Pressable>
       <View style={styles.header}>
         <Text style={styles.headerText}>{date}</Text>
       </View>

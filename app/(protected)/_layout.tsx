@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { HapticTab } from "@/components/ui/HapticTab";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TaskProvider } from "@/utils/taskContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,42 +17,55 @@ const queryClient = new QueryClient({
 
 export default function TabLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <StatusBar style="dark" />
-      <Tabs>
-        <Tabs.Screen
-          name="index"
-          options={{
-            headerShown: false,
-            tabBarLabel: "Home",
-            tabBarButton: HapticTab,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="home" color={color} size={size} />
-            ),
-            animation: "fade",
-            tabBarStyle: {
-              marginBottom: 6,
-              backgroundColor: "#e1dfeb",
-            },
-          }}
-        />
-        <Tabs.Screen
-          name="tasks"
-          options={{
-            headerShown: false,
-            tabBarLabel: "Tasks",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="list-ul" color={color} size={22} />
-            ),
-            animation: "fade",
-            tabBarStyle: {
-              marginBottom: 6,
-              backgroundColor: "#e1dfeb",
-            },
-          }}
-        />
-      </Tabs>
-    </QueryClientProvider>
+    <TaskProvider>
+      <QueryClientProvider client={queryClient}>
+        <StatusBar style="dark" />
+        <Tabs>
+          <Tabs.Screen
+            name="index"
+            options={{
+              headerShown: false,
+              tabBarLabel: "Home",
+              tabBarButton: HapticTab,
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="home" color={color} size={size} />
+              ),
+              animation: "fade",
+              tabBarStyle: {
+                marginBottom: 6,
+                backgroundColor: "#e1dfeb",
+              },
+            }}
+          />
+          <Tabs.Screen
+            name="tasks"
+            options={{
+              headerShown: false,
+              tabBarLabel: "Tasks",
+              tabBarIcon: ({ color, size }) => (
+                <FontAwesome name="list-ul" color={color} size={22} />
+              ),
+              animation: "fade",
+              tabBarStyle: {
+                marginBottom: 6,
+                backgroundColor: "#e1dfeb",
+              },
+            }}
+          />
+          <Tabs.Screen
+            name="recovery"
+            options={{
+              headerShown: false,
+              href: null,
+              tabBarStyle: {
+                marginBottom: 6,
+                backgroundColor: "#e1dfeb",
+              },
+            }}
+          />
+        </Tabs>
+      </QueryClientProvider>
+    </TaskProvider>
   );
 }
 

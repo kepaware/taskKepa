@@ -1,5 +1,5 @@
 import { useSQLiteContext } from "expo-sqlite";
-import type { Task, AddProps, UpdateProps, EndProps } from "./Types";
+import type { Task, AddProps, SeedArray, UpdateProps, EndProps } from "./Types";
 import { DateFunctions } from "@/utils/DateUtils";
 
 export function useDatabase() {
@@ -95,6 +95,30 @@ export function useDatabase() {
     }
   };
 
+  const clearTasksTable = async () => {
+    try {
+      await db.runAsync(`DELETE FROM tasks`);
+    } catch (error) {
+      console.log("DeleteError: ", error);
+    }
+  };
+
+  const seedDatabase = async ({ fileItemsArray }: SeedArray) => {
+    try {
+      fileItemsArray.forEach(async (e) => {
+        await db.runAsync(
+          "INSERT INTO tasks (title, frequency, last, due) VALUES (?, ?, ?, ?)",
+          e.title,
+          e.frequency,
+          e.last,
+          e.due
+        );
+      });
+    } catch (error) {
+      console.log("Seed Error: ", error);
+    }
+  };
+
   return {
     fetchAll,
     fetchCurrent,
@@ -102,5 +126,7 @@ export function useDatabase() {
     updateTask,
     endTask,
     deleteTask,
+    clearTasksTable,
+    seedDatabase,
   };
 }
