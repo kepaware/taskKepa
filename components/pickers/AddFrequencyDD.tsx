@@ -1,7 +1,6 @@
 import { frequencies } from "../frequencies";
 import { useState, type SetStateAction } from "react";
 import { FlatList, StyleSheet, View, Text, Pressable } from "react-native";
-import { freezeEnabled } from "react-native-screens";
 
 type Props = {
   frequency: string;

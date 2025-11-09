@@ -73,8 +73,8 @@ export function useDBFunctions() {
     const { mutate: finishTask, isPending: isUpdating } = useMutation({
       mutationFn: ({ endUpdate }: EndProps) => endTask({ endUpdate }),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["current"] });
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        queryClient.invalidateQueries({ queryKey: ["current"] });
       },
       onError: (error) => {
         console.log("END TASK ERROR: ", error.message);
@@ -88,6 +88,7 @@ export function useDBFunctions() {
       mutationFn: (id: number) => deleteTask(id),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        queryClient.invalidateQueries({ queryKey: ["current"] });
       },
       onError: (error) => {
         console.log("DELETE TASK ERROR: ", error.message);
@@ -101,6 +102,7 @@ export function useDBFunctions() {
       mutationFn: clearTasksTable,
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        queryClient.invalidateQueries({ queryKey: ["current"] });
       },
       onError: (error) => {
         console.log("CLEAR TABLE ERROR: ", error.message);
