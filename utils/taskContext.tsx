@@ -1,9 +1,5 @@
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
-// import { SplashScreen } from "expo-router";
-// import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// SplashScreen.preventAutoHideAsync();
 
 type RecoveryState = {
   savedDate: string | null;
