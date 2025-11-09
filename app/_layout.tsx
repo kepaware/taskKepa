@@ -32,21 +32,19 @@ const createDBIfNeeded = async (db: SQLiteDatabase) => {
 
 export default function App() {
   return (
-    <>
-      <SQLiteProvider databaseName="taskkepa.db" onInit={createDBIfNeeded}>
-        <QueryClientProvider client={queryClient}>
-          <StatusBar style="dark" />
-          <Stack>
-            <Stack.Screen
-              name="(protected)"
-              options={{
-                headerShown: false,
-                animation: "none",
-              }}
-            />
-          </Stack>
-        </QueryClientProvider>
-      </SQLiteProvider>
-    </>
+    <SQLiteProvider databaseName="taskkepa.db" onInit={createDBIfNeeded}>
+      <QueryClientProvider client={queryClient}>
+        <StatusBar style="dark" />
+        <Stack>
+          <Stack.Screen
+            name="(protected)"
+            options={{
+              headerShown: false,
+              animation: "none",
+            }}
+          />
+        </Stack>
+      </QueryClientProvider>
+    </SQLiteProvider>
   );
 }

@@ -32,7 +32,6 @@ export default function Backup() {
           //1. Check info array for 'tasks.txt' entry:
           fileInfo.forEach((e) => {
             if (e.endsWith("tasks.txt")) {
-              taskContext.setUri(e);
               file = e;
             }
           });
